@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="面向初等流体力学学生，理解 OpenAI 2026 年 9 月 8 日公布的 Navier–Stokes 奇点结果：方程、涡旋、有限能量、有外力条件与证明边界。">
+<title>从流动到奇点 · 读懂 OpenAI 的 NS 突破</title>
+<style>
+:root{color-scheme:light;--bg:#f6f5f0;--paper:#fffefa;--ink:#202e34;--muted:#5c696e;--line:#dce1dc;--teal:#087c79;--teal-soft:#e8f3ef;--orange:#b75e22;--orange-soft:#fbefe3;--blue:#396582;--sidebar:224px}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:36px}body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.85 "Microsoft YaHei","PingFang SC",system-ui,sans-serif}a{color:var(--teal);text-underline-offset:4px}button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid var(--teal);outline-offset:4px}button{border:1px solid var(--line);border-radius:6px;background:var(--paper);padding:7px 13px;color:var(--ink)}button:hover{border-color:var(--teal)}button[aria-pressed="true"]{background:var(--teal);color:white;border-color:var(--teal)}.paper-doc{max-width:1390px;margin:auto;padding:52px 46px 90px;display:grid;grid-template-columns:var(--sidebar) minmax(0,820px);gap:70px}.paper-sidebar{position:sticky;top:40px;align-self:start;font-size:14px;line-height:1.6}.brand{font-size:13px;letter-spacing:2px;color:var(--teal);font-weight:700}.map-label{margin:32px 0 13px;color:var(--muted)}.paper-sidebar nav{display:grid;gap:6px;border-left:1px solid var(--line)}.paper-sidebar nav a{display:block;padding:9px 0 9px 16px;text-decoration:none;color:var(--muted);border-left:2px solid transparent;margin-left:-1px}.paper-sidebar nav a.active{color:var(--teal);border-left-color:var(--teal);background:linear-gradient(90deg,var(--teal-soft),transparent)}.map-time{margin-top:25px;font-size:12px;color:var(--muted)}.map-tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:18px}.map-tools button{font-size:12px}.paper-main{min-width:0}.eyebrow{font-size:12px;letter-spacing:1.5px;color:var(--teal);text-transform:uppercase}h1{font-size:clamp(30px,3.5vw,43px);line-height:1.35;letter-spacing:-1px;margin:14px 0 18px;font-weight:650}h2{font-size:27px;line-height:1.4;margin:0 0 24px;letter-spacing:-.6px}h3{font-size:20px;line-height:1.5;margin:28px 0 10px}p{margin:12px 0 19px}strong{font-weight:650}.subtitle{font-size:18px;color:var(--muted);margin-bottom:28px}.meta{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:12px;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:23px;margin-bottom:28px}section{padding:47px 0;border-bottom:1px solid var(--line)}section:first-child{padding-top:0}.section-no{display:block;font-size:12px;color:var(--teal);letter-spacing:2px;margin-bottom:12px}.lead{font-size:19px;line-height:1.8}.key-result{border-left:3px solid var(--teal);padding:5px 0 5px 22px;margin:25px 0}.key-result p{margin:6px 0}.source-ref{font-size:12px;vertical-align:super;text-decoration:none;margin-left:3px}.small,.read-guide,figcaption{font-size:14px;color:var(--muted);line-height:1.75}.small{margin:9px 0}.note{padding:16px 20px;background:var(--teal-soft);border-radius:3px;margin:24px 0}.note.warn{background:var(--orange-soft)}.note p{margin:0}.note-label{display:block;font-size:12px;letter-spacing:1px;color:var(--teal);margin-bottom:7px}.warn .note-label{color:var(--orange)}.svg-figure{margin:27px 0;background:var(--paper);border:1px solid var(--line);padding:23px 24px 17px;border-radius:8px}.svg-figure svg{display:block;width:100%;height:auto}.svg-figure figcaption{margin-top:14px}.svg-figure svg text{font-family:"Microsoft YaHei","PingFang SC",sans-serif;fill:var(--ink)}.svg-figure svg .sub{fill:var(--muted)}.svg-figure svg .teal{fill:var(--teal)}.svg-figure svg .orange{fill:var(--orange)}.read-guide{margin:12px 0 0}.flow-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}.flow-overview div{font-size:13px;line-height:1.6}.flow-overview strong{display:block;font-size:15px;margin-bottom:6px}.term-bridge{border-left:2px solid var(--line);padding-left:16px;margin:18px 0;color:var(--muted);font-size:15px}.formula-card{border:1px solid var(--line);background:var(--paper);padding:23px 25px;margin:25px 0;border-radius:8px}.formula-card__label{font-size:12px;letter-spacing:1px;color:var(--teal);margin-bottom:14px}.formula-card__equation{font-family:"Cambria Math","Times New Roman",serif;font-size:26px;line-height:1.8;text-align:center;overflow-x:auto;padding:12px 0}.equation-line{white-space:nowrap;display:block}.formula-card__caption{font-size:15px;margin:15px 0}.formula-symbol{font-family:"Cambria Math","Times New Roman",serif;font-style:italic}.formula-legend{margin:18px 0 0;font-size:14px}.formula-legend__row{display:grid;grid-template-columns:110px 1fr;padding:8px 0;border-top:1px solid var(--line);gap:12px}.formula-legend dt{font-family:"Cambria Math",serif;font-size:18px}.formula-legend dd{margin:0}.formula-card__intuition{background:var(--teal-soft);font-size:15px;padding:14px 16px;margin-top:19px}.formula-terms{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;align-items:center}.formula-terms button{font-family:"Cambria Math","Times New Roman",serif;font-size:23px;line-height:1.6;white-space:nowrap;padding:5px 10px}.formula-terms .sign{font:23px "Cambria Math",serif}.term-explanation{min-height:116px;margin-top:18px;border-top:1px solid var(--line);padding-top:14px;font-size:15px}.term-explanation strong{display:block;margin-bottom:5px}.symbol-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px 28px;font-size:14px;margin-top:18px}.symbol-grid p{margin:0}.symbol-grid strong{font-family:"Cambria Math",serif;font-size:19px;margin-right:9px}details{border-top:1px solid var(--line);padding:14px 0;font-size:15px}summary{cursor:pointer;color:var(--teal)}details p{margin:10px 0}.lab{background:var(--paper);border:1px solid var(--line);padding:22px 24px;border-radius:8px;margin:26px 0}.lab h3{margin:0 0 8px}.lab-intro{font-size:14px;color:var(--muted);margin:0 0 18px}.controls{display:flex;gap:12px 20px;align-items:center;flex-wrap:wrap}.range-group{flex:1;min-width:200px}.range-group label{display:block;font-size:14px;margin-bottom:6px}.range-group input{width:100%;accent-color:var(--teal);display:block;cursor:ew-resize}.readouts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);margin:20px 0 0;padding-top:14px;gap:15px}.readout span{display:block;color:var(--muted);font-size:12px}.readout output{font-family:"Cambria Math",serif;font-size:25px;font-variant-numeric:tabular-nums}.readout small{font-size:12px;color:var(--muted)}.lab svg{width:100%;height:auto;display:block}.lab svg text{fill:var(--ink);font-family:"Microsoft YaHei",sans-serif}.legend{display:flex;flex-wrap:wrap;gap:18px;font-size:13px;margin:12px 0}.swatch{display:inline-block;width:22px;height:3px;vertical-align:middle;margin-right:6px}.swatch.u{background:var(--orange)}.swatch.e{background:var(--teal)}.swatch.v{background:var(--blue)}.status{font-size:14px;margin:13px 0 0;min-height:50px}.comparison{width:100%;border-collapse:collapse;font-size:14px;line-height:1.7;margin:24px 0}.comparison th{text-align:left;color:var(--muted);font-weight:500}.comparison td,.comparison th{padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}.comparison tr.highlight td{background:var(--teal-soft)}.comparison td:first-child{font-weight:650;white-space:nowrap}.chain{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:23px 0}.chain article{border-top:2px solid var(--teal);padding-top:12px}.chain h3{font-size:17px;margin:0 0 8px}.chain p{font-size:14px;margin:0}.timeline{margin:24px 0;padding-left:22px;border-left:2px solid var(--line)}.timeline p{font-size:15px;position:relative}.timeline p:before{content:"";position:absolute;width:8px;height:8px;border-radius:50%;background:var(--teal);left:-27px;top:11px}.timeline strong{display:inline-block;margin-right:10px}.quiz{margin:25px 0}.quiz fieldset{border:0;padding:17px 0;margin:0;border-top:1px solid var(--line)}.quiz legend{float:left;width:100%;font-size:16px;font-weight:650;margin-bottom:10px}.quiz .options{clear:both;display:grid;gap:8px}.quiz label{font-size:15px;cursor:pointer}.quiz input{accent-color:var(--teal);margin-right:8px}.quiz-feedback{font-size:14px;min-height:30px;margin:8px 0 0}.quiz-feedback.correct{color:var(--teal)}.quiz-feedback.incorrect{color:var(--orange)}.sources{font-size:14px;padding-left:22px}.sources li{padding:7px 0}.sources p{margin:4px 0;color:var(--muted);font-size:13px}.mobile-map{display:none}.progress{position:fixed;top:0;left:0;width:100%;height:3px;background:transparent;z-index:30}.progress span{height:100%;display:block;background:var(--teal);width:0}.footer{padding-top:30px;font-size:13px;color:var(--muted)}.anchor-link{font-size:13px;display:inline-block;margin-top:16px}.skip{position:absolute;top:-100px;left:20px;background:var(--paper);padding:10px;z-index:99}.skip:focus{top:10px}body.large-text{font-size:19px}body.large-text .small,body.large-text figcaption,body.large-text .read-guide{font-size:16px}
+@media(min-width:1500px){.paper-doc{max-width:1480px;gap:110px;padding-left:80px;padding-right:100px}}
+@media(max-width:1119px){.paper-doc{display:block;max-width:860px;padding:30px 30px 70px}.paper-sidebar{display:none}.mobile-map{display:block;margin:18px 0 27px}.mobile-map summary{font-size:14px}.mobile-map nav{display:flex;flex-wrap:wrap;gap:10px 18px;padding-top:12px;font-size:14px}.mobile-map a{text-decoration:none}}
+@media(max-width:600px){body{font-size:16px;line-height:1.8}.paper-doc{padding:24px 19px 50px}h1{font-size:31px}h2{font-size:24px}h3{font-size:19px}section{padding:34px 0}.lead{font-size:17px}.svg-figure,.lab,.formula-card{padding:17px 15px}.flow-overview{grid-template-columns:repeat(2,1fr);gap:16px}.symbol-grid{grid-template-columns:1fr}.formula-legend__row{grid-template-columns:80px 1fr}.formula-card__equation{font-size:22px}.formula-terms button{font-size:20px}.chain{grid-template-columns:1fr;gap:22px}.readouts{gap:9px}.readout output{font-size:22px}.comparison{font-size:13px}.comparison td,.comparison th{padding:9px 5px}.term-explanation{min-height:152px}.desktop-diagram{display:none}.mobile-diagram{display:block}.meta{gap:7px 14px}.controls button{min-height:44px}}
+@media(min-width:601px){.svg-figure .mobile-diagram{display:none}}
+@media(max-width:600px){.svg-figure .desktop-diagram{display:none}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+@media print{body{background:white;font-size:11pt}.paper-doc{display:block;max-width:none;margin:0;padding:0}.paper-sidebar,.mobile-map,.progress,.map-tools,.controls,.skip{display:none}h1{font-size:25pt}h2{font-size:19pt}section{padding:20px 0}.lab,.svg-figure,.formula-card{break-inside:avoid;background:white}.formula-terms button{color:#202e34;background:white}.quiz input{display:none}a{color:#202e34}.footer{font-size:9pt}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳到正文</a>
+<svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#087c79"/></marker></defs></svg>
+<div class="progress" aria-hidden="true"><span id="progress"></span></div>
+<div class="paper-doc">
+<aside class="paper-sidebar" aria-label="阅读地图">
+  <div class="brand">流体 · 数学 · AI</div>
+  <p class="map-label">你将走过的理解路径</p>
+  <nav id="reading-map">
+    <a href="#thesis">突破究竟说了什么</a>
+    <a href="#concepts">把方程翻译成流体语言</a>
+    <a href="#problem-chain">为什么三维流动难控制</a>
+    <a href="#mechanism">速度无限，能量却有限？</a>
+    <a href="#evidence">AI 怎样走到数学证明</a>
+    <a href="#limits">它改变了什么，还有什么</a>
+    <a href="#paper-mark-panel">用四道题检查理解</a>
+    <a href="#sources">回到原始来源</a>
+  </nav>
+  <p class="map-time">适合：学过初等流体力学<br>建议阅读：25–35 分钟<br>三个交互演示 · 四道自测题</p>
+  <div class="map-tools"><button type="button" id="font-toggle" aria-pressed="false">放大正文</button><button type="button" id="print-page">打印 / PDF</button></div>
+</aside>
+<main class="paper-main" id="main">
+<header>
+  <div class="eyebrow">一份从基础开始的阅读讲义</div>
+  <h1>从流动到奇点<br>读懂 OpenAI 的 NS 突破</h1>
+  <p class="subtitle">你不需要先会偏微分方程。我们从一小团流体出发，理解一个涡旋如何把“总能量有限”与“局部速度无界”放在一起。</p>
+  <div class="meta"><span>对应发布：2026 年 9 月 8 日</span><span>资料核对：2026 年 10 月 13 日</span><span>中文入门讲解 · 可离线阅读</span></div>
+  <details class="mobile-map"><summary>展开阅读地图</summary><nav><a href="#thesis">突破</a><a href="#concepts">方程</a><a href="#problem-chain">三维难点</a><a href="#mechanism">奇点机制</a><a href="#evidence">证明与 AI</a><a href="#limits">结论边界</a><a href="#paper-mark-panel">自测</a><a href="#sources">来源</a></nav></details>
+</header>
+
+<section id="thesis">
+  <span class="section-no">01 / 先确定我们要理解的结果</span>
+  <h2>研究目的：找到黏性也无法阻止的崩溃</h2>
+  <p class="lead">Navier–Stokes 方程，简称 NS 方程，描述水和空气怎样流动。这次研究针对一个更基础的问题：<strong>在理想化的三维不可压缩模型里，初始流动很光滑，黏性始终存在，流动是否仍可能在有限时间内失去光滑性？</strong></p>
+  <figure class="svg-figure">
+    <svg class="desktop-diagram" viewBox="0 0 740 116" role="img" aria-labelledby="overview-title"><title id="overview-title">光滑起点经过流动与黏性的竞争，形成收缩拉长的涡旋，最终出现有限时间奇点</title><g fill="#e8f3ef"><rect x="0" y="13" width="148" height="85" rx="6"/><rect x="194" y="13" width="150" height="85" rx="6"/><rect x="392" y="13" width="150" height="85" rx="6"/><rect x="589" y="13" width="150" height="85" rx="6"/></g><g font-size="17" text-anchor="middle"><text x="74" y="47">光滑的静止流体</text><text x="269" y="47">外力启动流动</text><text x="467" y="47">涡旋收缩、拉长</text><text x="664" y="47">局部速度无界</text></g><g class="sub" font-size="13" text-anchor="middle"><text x="74" y="77">没有预先埋入奇点</text><text x="269" y="77">黏性仍在抹平变化</text><text x="467" y="77">各项精细地抵消</text><text x="664" y="77">总能量保持有限</text></g><g stroke="#087c79" stroke-width="2" marker-end="url(#arrow)"><path d="M158 55H181"/><path d="M354 55H380"/><path d="M552 55H576"/></g></svg>
+    <svg class="mobile-diagram" viewBox="0 0 310 282" role="img" aria-label="结果概览：光滑静止起点、光滑外力和黏性、收缩拉长涡旋、速度无界但总能量有限"><g fill="#e8f3ef"><rect x="0" y="0" width="310" height="53" rx="5"/><rect x="0" y="75" width="310" height="53" rx="5"/><rect x="0" y="150" width="310" height="53" rx="5"/><rect x="0" y="225" width="310" height="53" rx="5"/></g><g font-size="16" text-anchor="middle"><text x="155" y="23">光滑的静止流体</text><text x="155" y="98">光滑外力启动，黏性始终存在</text><text x="155" y="173">涡旋收缩、拉长；方程各项抵消</text><text x="155" y="248">有限时间内，局部速度无界</text></g><g class="sub" font-size="12" text-anchor="middle"><text x="155" y="43">起点没有奇点</text><text x="155" y="118">竞争由方程本身描述</text><text x="155" y="193">留下的外力依然光滑</text><text x="155" y="268">总能量依然有限</text></g><g stroke="#087c79" stroke-width="2" marker-end="url(#arrow)"><path d="M155 55V70"/><path d="M155 130V145"/><path d="M155 205V220"/></g></svg>
+    <figcaption>这张图怎么读：起点和外力都很规整；奇点来自随后流动的演化。图示概括官方公告的机制，不是证明中的精确流场。</figcaption>
+  </figure>
+  <div class="key-result"><p><strong>核心结论：</strong>OpenAI 宣布，其内部 AI 系统构造并证明了一个<strong>有光滑外力、黏性系数为正</strong>的三维不可压缩 NS 流动：从静止开始，在有限时间内出现速度无界增大的奇点，同时总动能保持有限；并报告给出解析证明与 Lean 形式化。官方称这建立了千禧年问题的 <strong>C、D 两种崩溃表述</strong>。<a class="source-ref" href="#source-1">[1]</a></p></div>
+  <p>用逻辑语言说，它给出的是一个<strong>存在性的反例</strong>：“存在一种满足要求的流动，会崩溃。”这已经足以回答相应的数学问题；它并不意味着“任何流动都会崩溃”。</p>
+  <div class="note warn"><span class="note-label">读这份讲义时的证据边界</span><p>下面对新成果的描述来自 OpenAI 官方公告；对题目条件的解释来自 Clay 数学研究所正式题目。此次读取的公告文本未提供可供逐项核查的证明全文及 Lean 工程入口，因此这份网页<strong>不声称已独立复核证明</strong>。所读 Clay 项目页仍标为 “Active”，这也不能单凭网页标签判断学界最终认可状态。<a class="source-ref" href="#source-3">[3]</a></p></div>
+</section>
+
+<section id="concepts">
+  <span class="section-no">02 / 把符号换成你熟悉的流体</span>
+  <h2>NS 方程，其实是流体版的 F = ma</h2>
+  <h3>第一步：不追踪每个分子，给每个位置一个速度</h3>
+  <p>想象在水流里铺一张三维网格，在每个位置放一个很小的测速仪。它测到的速度随位置和时间变化，这就是<strong>速度场</strong> <span class="formula-symbol">u(x,t)</span>。其中 <span class="formula-symbol">x</span> 代表空间位置，<span class="formula-symbol">t</span> 代表时间，<span class="formula-symbol">u</span> 有三个方向的分量。</p>
+  <p>我们把一小块、包含很多分子的流体当作连续物质，给它定义密度、压力和速度。这叫<strong>连续介质近似</strong>。它在很多工程尺度上很好用，但数学上允许我们研究越来越小的尺度；真实物质则有分子尺度。</p>
+  <h3>第二步：不可压缩，不等于流速处处相同</h3>
+  <p>这里密度取常数。一小团随流运动的流体，可以变长、变窄，但体积不变。从固定的小盒子看，流进去的体积率与流出来的体积率相等。这写成 <span class="formula-symbol">∇·u = 0</span>，读作“速度场的散度为零”。</p>
+  <div class="term-bridge"><strong>散度 divergence：</strong>检查一个很小的盒子里，有没有净流出量。散度为零允许复杂的旋转与形变，也允许不同位置有不同速度。</div>
+  <h3>第三步：沿着流体走，才得到它的加速度</h3>
+  <p>固定测速仪记录的速度变化，只是加速度的一部分。一滴水还会从慢速区走到快速区，即使整条流动不随时间改变，它也可以加速。收缩喷嘴里的稳定水流就是这个例子。</p>
+  <div class="formula-card" aria-label="NS 方程逐项解释">
+    <div class="formula-card__label">点击每一项，读它的物理意义</div>
+    <div class="formula-terms" id="equation-terms" aria-label="动量方程">
+      <button type="button" data-term="time" aria-pressed="true">∂u / ∂t</button><span class="sign">+</span>
+      <button type="button" data-term="advection" aria-pressed="false">(u · ∇)u</button><span class="sign">=</span>
+      <button type="button" data-term="pressure" aria-pressed="false">−∇p / ρ</button><span class="sign">+</span>
+      <button type="button" data-term="viscosity" aria-pressed="false">ν Δu</button><span class="sign">+</span>
+      <button type="button" data-term="force" aria-pressed="false">f</button>
+    </div>
+    <div class="term-explanation" id="term-explanation" aria-live="polite"><strong>∂u / ∂t：固定地点看见的速度变化</strong>你站在桥上，观察同一个位置的水速怎样随时间变化。∂ 是偏导数：先固定空间位置，只对时间求变化率。它与下一项相加，才是随流体运动的总加速度。</div>
+    <div class="symbol-grid"><p><strong>u</strong>速度，单位 m/s</p><p><strong>p</strong>压力，单位 Pa</p><p><strong>ρ</strong>常密度，单位 kg/m³</p><p><strong>ν</strong>运动黏度，单位 m²/s</p><p><strong>f</strong>单位质量外力，单位 m/s²</p><p><strong>∇ / Δ</strong>空间变化 / 各方向二阶导数之和</p></div>
+    <div class="formula-card__intuition">左边是“一小团流体怎样加速”；右边是“压力、黏性和外力怎样驱动它”。所有项都是加速度，单位都是 m/s²。数学题常把 ρ 归一化为 1，把 p 写成单位密度的压力。</div>
+  </div>
+  <details><summary>∇、偏导数、拉普拉斯算子，我需要掌握到什么程度？</summary><p>把导数理解为“变化率”即可。∂u/∂t 问同一地点的速度每秒改变多少；∇p 指向压力增加最快的方向，所以 −∇p 推向低压侧；Δu 把三个空间方向上的二阶变化相加，刻画局部速度相对邻域的起伏。黏性项的典型作用是抹平这些起伏。你不必先学会求解这些微分方程。</p></details>
+  <h3>黏性会抹平速度差，却不保证每一点都减速</h3>
+  <p>两层相邻流体，一层快、一层慢，黏性会传递动量：快层往往变慢，慢层也可能变快。无外力、无边界能量输入时，黏性耗散总动能；<strong>它不是在所有地点统一施加一个“减速按钮”</strong>。这一点是理解难题的起点。</p>
+  <div class="note"><span class="note-label">从这条方程走向本次成果</span><p>新结果的关键不是删掉黏性，也不是塞进无穷大的外力。它要让速度变得无界，同时使黏性、压力与加速度之间的组合仍对应一个光滑外力。</p></div>
+</section>
+
+<section id="problem-chain">
+  <span class="section-no">03 / 旧问题为什么如此顽固</span>
+  <h2>三维涡旋可以被拉长，也可以变得更强</h2>
+  <h3>“解存在”与“解一直光滑”是两件事</h3>
+  <p>对规整的初始流动，方程可以在一段时间内给出光滑解。困难在于：这段光滑演化能否一直延续？1934 年 Leray 已建立了广义意义下的解的存在性，但广义解未必处处光滑。你可以先把<strong>弱解</strong>理解为“允许用整体积分表达守恒关系的解”；它比逐点计算导数的光滑解要求低。<a class="source-ref" href="#source-2">[2]</a></p>
+  <p>“奇点”（singularity）意味着光滑描述在某个时空位置失效。“有限时间爆破”（finite-time blow-up）中的“爆破”是数学术语：某个量在一个有限时间的极限中变得无界，<strong>不是水真的发生爆炸</strong>。本次公告明确描述的是速度无界，而不仅是笼统的“不光滑”。</p>
+  <h3>涡量：用一个量描述局部旋转</h3>
+  <p>想象一根小小的桨轮放在流体里。它的局部转动帮助我们理解<strong>涡量</strong> <span class="formula-symbol">ω = ∇×u</span>。涡量描述局部旋转的强度与方向；它不是水的流速，也不是整条涡旋的形状。在刚体旋转中，涡量大小是角速度的两倍。</p>
+  <div class="formula-card">
+    <div class="formula-card__label">可选的数学桥梁 · 涡量怎样改变</div>
+    <div class="formula-card__equation"><span class="equation-line">Dω / Dt = (ω · ∇)u + ν Δω + ∇ × f</span></div>
+    <p class="formula-card__caption">对不可压缩、常密度的 NS 方程取旋度，可得到这条关系。它把局部旋转的变化，分成拉伸、黏性扩散和外力的旋转作用。</p>
+    <dl class="formula-legend"><div class="formula-legend__row"><dt>Dω / Dt</dt><dd>随流体运动观察到的涡量变化，D/Dt = ∂/∂t + u·∇。</dd></div><div class="formula-legend__row"><dt>(ω · ∇)u</dt><dd>沿涡量方向的速度变化，可以拉伸并放大涡量，也可以改变它的方向。它的作用取决于具体流动。</dd></div><div class="formula-legend__row"><dt>ν Δω</dt><dd>黏性扩散涡量，倾向于抹平局部尖锐变化。</dd></div><div class="formula-legend__row"><dt>∇ × f</dt><dd>外力对旋转的贡献；光滑外力也可以启动与维持流动。</dd></div></dl>
+    <div class="formula-card__intuition">在严格二维流动中，速度没有第三方向分量，也不沿第三方向变化，因此这类涡量拉伸项消失。三维多出的自由度，正是难点之一。二维的好结果不能直接搬到三维。</div>
+  </div>
+  <div class="lab" id="stretch-lab">
+    <h3>动手看：体积不变，涡管怎样拉长？</h3>
+    <p class="lab-intro">把同一小团流体近似成圆柱。下面只画几何形变，帮助理解不可压缩；它不是新证明的流场，也不求解 NS 方程。</p>
+    <svg id="stretch-svg" viewBox="0 0 660 220" role="img" aria-labelledby="stretch-title"><title id="stretch-title">随拉伸倍数增大，示意圆柱变长、变细，体积保持不变</title><defs><linearGradient id="tube-fill" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#a9d8cd"/><stop offset=".5" stop-color="#e8f3ef"/><stop offset="1" stop-color="#79b9ab"/></linearGradient></defs><path d="M50 110H610" stroke="#b9c6c3" stroke-dasharray="4 5"/><g id="tube-shape"><rect id="tube-body" x="263" y="70" width="134" height="80" fill="url(#tube-fill)"/><ellipse id="tube-left" cx="263" cy="110" rx="13" ry="40" fill="#a1d2c4" stroke="#087c79"/><ellipse id="tube-right" cx="397" cy="110" rx="13" ry="40" fill="#d7ebe3" stroke="#087c79"/><path id="tube-top" d="M263 70H397" stroke="#087c79"/><path id="tube-bottom" d="M263 150H397" stroke="#087c79"/></g><g stroke="#087c79" stroke-width="2" marker-end="url(#arrow)"><path id="stretch-arrow-left" d="M244 110H212"/><path id="stretch-arrow-right" d="M416 110H448"/></g><text id="stretch-caption" x="330" y="200" text-anchor="middle" font-size="16">轴向变长 · 截面变窄</text></svg>
+    <div class="controls"><div class="range-group"><label for="stretch">拉伸倍数 λ：<output id="stretch-label">1.00</output></label><input type="range" id="stretch" min="1" max="4" step="0.05" value="1"></div><button type="button" id="stretch-reset">重置</button></div>
+    <div class="readouts"><div class="readout"><span>长度 / 初始长度</span><output id="length-ratio">1.00</output></div><div class="readout"><span>半径 / 初始半径</span><output id="radius-ratio">1.00</output></div><div class="readout"><span>体积 / 初始体积</span><output id="volume-ratio">1.00</output></div></div>
+    <p class="status" id="stretch-status" aria-live="polite">长度 × 半径² 保持不变，所以一小团流体变长时，也必须变细。</p>
+    <p class="small">若再作理想、无黏、无适当外力干扰的涡管近似，并保持环量不变，截面缩小可以增强涡量。真实 NS 流动还有黏性扩散，因此这幅图只建立拉伸直觉。</p>
+  </div>
+  <p>在很多流动中，黏性足以抑制小尺度结构。但要证明“所有允许的三维流动永远光滑”，就必须排除每一种可能的集中方式。仅仅知道总体动能没有失控，还不够控制局部最大速度。</p>
+  <div class="note warn"><span class="note-label">一个容易混淆的几何区别</span><p>上面的圆柱跟踪<strong>同一团物质</strong>，它的体积守恒。下一节讲的“高速区域变小”，指按速度大小识别的<strong>空间区域</strong>，不是把同一团不可压缩物质压成更小体积。</p></div>
+</section>
+
+<section id="mechanism">
+  <span class="section-no">04 / 这次结果最关键的两道关</span>
+  <h2>局部无限快，为什么不需要无限能量？</h2>
+  <h3>第一道关：最大值与总量，不能相互替代</h3>
+  <p>总动能不是“最大速度的平方”，而是把各处的速度平方乘以当地体积，再全部加起来。一个极小区域可以非常快，而总量仍有限。像一根越来越尖、越来越窄的峰：峰高很大，峰下的总面积却可以不大。</p>
+  <div class="formula-card">
+    <div class="formula-card__label">能量在数什么</div>
+    <div class="formula-card__equation"><span class="equation-line">E(t) = ½ ρ ∫ |u(x,t)|² dV</span><span class="equation-line">局部能量 ≈ ½ ρ U² V</span></div>
+    <p class="formula-card__caption">第一式计算全空间的动能；周期情形则在一个周期单元上积分。第二式近似一个速度量级为 U、体积为 V 的区域。</p>
+    <dl class="formula-legend"><div class="formula-legend__row"><dt>E(t)</dt><dd>总动能。“有限”不等于“恒定”；有外力时可以输入能量，黏性可以耗散能量。</dd></div><div class="formula-legend__row"><dt>ρ</dt><dd>常密度。比较相对量时，它只提供固定比例因子。</dd></div><div class="formula-legend__row"><dt>|u|、U</dt><dd>|u| 是每一点的速度大小；U 是示意区域的典型速度。</dd></div><div class="formula-legend__row"><dt>dV、V</dt><dd>dV 是积分里的一小块体积；V 是所选高速空间区域的体积。</dd></div></dl>
+    <div class="formula-card__intuition">U² 变大，同时 V 变小。如果区域缩小得足够快，乘积 U²V 就不发散。这说明“局部无界、总体有限”逻辑上兼容，但还没有证明这种演化满足 NS 方程。</div>
+  </div>
+  <div class="lab" id="energy-lab">
+    <h3>动手看：峰值增大，区域能量变小</h3>
+    <p class="lab-intro">教学玩具模型：令 τ = t/T，U/U₀ = 1/(1−τ)，V/V₀ = (1−τ)³。因此区域能量比 E/E₀ = 1−τ。<strong>这些指数是为教学选择的，不是 OpenAI 构造的公式。</strong></p>
+    <svg id="energy-svg" viewBox="0 0 660 260" role="img" aria-labelledby="energy-title energy-desc"><title id="energy-title">随着时间接近 T，速度比上升，而体积比和区域能量比下降</title><desc id="energy-desc">纵轴采用对数尺度，横轴为归一化时间 t/T。图展示三个玩具模型量，没有画出真正的奇点。</desc><g id="energy-grid"></g><path id="curve-u" fill="none" stroke="#b75e22" stroke-width="2.5"/><path id="curve-e" fill="none" stroke="#087c79" stroke-width="2.5"/><path id="curve-v" fill="none" stroke="#396582" stroke-width="2" stroke-dasharray="5 4"/><path id="time-guide" stroke="#80918f" stroke-width="1.5" stroke-dasharray="4 4"/><circle id="dot-u" r="5" fill="#b75e22"/><circle id="dot-e" r="5" fill="#087c79"/><circle id="dot-v" r="5" fill="#396582"/></svg>
+    <div class="legend"><span><i class="swatch u"></i>速度比 U/U₀</span><span><i class="swatch e"></i>区域能量比 E/E₀</span><span><i class="swatch v"></i>体积比 V/V₀（虚线）</span></div>
+    <div class="controls"><div class="range-group"><label for="time">归一化时间 t/T：<output id="time-label">0.00</output></label><input type="range" id="time" min="0" max="0.98" step="0.01" value="0"></div><button type="button" id="near-end">靠近 T</button><button type="button" id="energy-reset">重置</button></div>
+    <div class="readouts"><div class="readout"><span>速度比</span><output id="speed-value">1.00</output></div><div class="readout"><span>体积比</span><output id="region-value">1.000</output></div><div class="readout"><span>区域能量比</span><output id="energy-value">1.00</output></div></div>
+    <p class="status" id="energy-status" aria-live="polite">起点：区域速度、体积和能量都归一化为 1。向右拖动，观察三个量怎样分开。</p>
+    <p class="small">这张图怎么读：越靠近右端，橙线越高，蓝线与绿线越低。对数纵轴相邻标注相差 100 倍；曲线表示不同量，不能把三条线相加。这里计算所选高速区域的能量，实际总动能还包括其余空间。演示只到 τ = 0.98；“无穷大”是 τ → 1⁻ 的极限，不是屏幕上的某个有限数值。</p>
+  </div>
+  <details><summary>有外力时，能量为什么不一定守恒？</summary><p>对足够光滑、合适衰减或周期的流动，在取 ρ = 1 的约定下：dE/dt = −ν∫|∇u|²dV + ∫f·u dV。第一项是黏性耗散，第二项是外力做功。公告中的“能量保持有限”，不应改写成“能量始终守恒”。</p></details>
+  <h3>第二道关：不能偷偷让外力也爆掉</h3>
+  <p>假设有人随手画一个越来越快的速度场，再宣称“只要施加合适的力，它就会发生”。这不够：如果所需外力自己发散，或者违反题目对光滑性和衰减的要求，就没有解决问题。</p>
+  <div class="formula-card">
+    <div class="formula-card__label">检验构造时，外力是剩下的量</div>
+    <div class="formula-card__equation"><span class="equation-line">f = ∂u/∂t + (u·∇)u + ∇p/ρ − νΔu</span></div>
+    <p class="formula-card__caption">这是把同一条 NS 方程移项。知道候选速度场与压力后，可以检查它们需要什么外力。这里说明构造要满足的约束，不是在复现未取得全文的证明步骤。</p>
+    <div class="formula-card__intuition">公告强调的技术核心：加速度、动量输运、压力梯度与黏性项各自可以很大，但经过精确平衡，组合后留下的 f 仍然光滑。这种抵消必须是数学上精确受控的，不能靠近似曲线看起来接近来代替。</div>
+  </div>
+  <figure class="svg-figure concept-visual">
+    <svg class="desktop-diagram" viewBox="0 0 590 212" role="img" aria-labelledby="balance-title"><title id="balance-title">精细抵消示意：多个变大的方程项组合之后，外力仍满足光滑性要求</title><g fill="#fbefe3"><rect x="0" y="8" width="270" height="49" rx="5"/><rect x="0" y="73" width="270" height="49" rx="5"/><rect x="0" y="138" width="270" height="49" rx="5"/></g><g font-size="17"><text x="20" y="39">加速度与动量输运</text><text x="20" y="104">压力梯度</text><text x="20" y="169">黏性项</text></g><path d="M280 32L335 99M280 99H335M280 164L335 99" stroke="#087c79" fill="none" stroke-width="2"/><path d="M340 99H376" stroke="#087c79" stroke-width="2" marker-end="url(#arrow)"/><rect x="389" y="60" width="198" height="80" rx="5" fill="#e8f3ef"/><text x="488" y="92" text-anchor="middle" font-size="18">光滑外力 f</text><text x="488" y="119" text-anchor="middle" font-size="13" class="sub">必须符合题目的约束</text><text x="294" y="205" text-anchor="middle" font-size="13" class="sub">各项可以很大 · 精确组合必须受控</text></svg>
+    <svg class="mobile-diagram" viewBox="0 0 310 249" role="img" aria-label="加速度与输运、压力梯度、黏性项经过精细组合，留下满足条件的光滑外力"><g fill="#fbefe3"><rect width="310" height="39" rx="4"/><rect y="49" width="150" height="39" rx="4"/><rect x="160" y="49" width="150" height="39" rx="4"/></g><g font-size="16" text-anchor="middle"><text x="155" y="26">加速度与动量输运</text><text x="75" y="75">压力梯度</text><text x="235" y="75">黏性项</text></g><path d="M155 91V133" stroke="#087c79" stroke-width="2" marker-end="url(#arrow)"/><text x="165" y="117" font-size="13" class="sub">精细组合</text><rect y="146" width="310" height="67" rx="4" fill="#e8f3ef"/><text x="155" y="173" font-size="17" text-anchor="middle">光滑外力 f</text><text x="155" y="198" font-size="13" text-anchor="middle" class="sub">仍然满足题目约束</text><text x="155" y="241" font-size="13" text-anchor="middle" class="sub">各项可以很大 · 组合必须受控</text></svg>
+    <figcaption>这张图怎么读：左边不是三种额外施加的力，而是方程中要同时协调的项。右边的规整外力，才是构造必须交出的结果之一。</figcaption>
+  </figure>
+  <p>官方把构造描述为一个<strong>向内盘旋、越来越细长的涡旋</strong>，并指出高速核心区域缩小，使动能保持有限。这给出了几何直觉。真正的证明还必须交代全空间或周期条件、压力、外力的所有必要导数以及奇点形成，不能只画出一个漂亮的涡旋。</p>
+</section>
+
+<section id="evidence">
+  <span class="section-no">05 / 从找到想法到证明结果</span>
+  <h2>AI 找候选，数学证明排除漏洞</h2>
+  <h3>为什么“计算里越来越快”还不够？</h3>
+  <p>数值模拟只能用有限网格、有限时间步和有限精度。某个速度增大，可能是物理机制，也可能是网格不够细或数值不稳定。模拟无法直接运行到“无限精细”的极限，更不能单靠一次模拟排除所有隐藏条件。</p>
+  <div class="chain"><article><h3>数值证据</h3><p>观察候选流动的趋势，帮助形成猜想。它本身不能证明有限时间奇点。</p></article><article><h3>解析证明</h3><p>用数学推导证明精确方程、条件和极限结论。公告称本次提供了这一层。</p></article><article><h3>形式化验证</h3><p>把定义与推理写成形式语言，让证明检查器检查每一步。公告报告使用 Lean。</p></article></div>
+  <div class="term-bridge"><strong>Lean：</strong>一种交互式定理证明工具。AI 可以提出步骤、写代码；Lean 的内核按形式规则检查证明项。关键还包括：形式化的定理是否准确对应原题、依赖了什么假设、项目是否可完整重建。报告通过检查与我们独立重建检查，是两种不同的证据。</div>
+  <h3>OpenAI 报告的发现路径</h3>
+  <p>公告称，研究使用的是能力强于 GPT‑6 Astra 的<strong>内部模型</strong>，以多智能体系统探索不同思路。这里的“智能体”可以理解为有工具、能运行代码并交流中间结果的模型执行单元。</p>
+  <div class="timeline"><p><strong>9 月 1 日</strong>启动对多个重要数学问题的探索，对 NS 的 A、B、C、D 表述分组尝试。</p><p><strong>先取得 Euler 结果</strong>公告称约 100 个智能体协作约 50 小时，得到了无外力 Euler 方程的正则性反例；随后把这些见解用于 NS 探索。</p><p><strong>9 月 5 日</strong>公告称找到 NS 解法；距离首批智能体启动约 88 小时。产生结果的组有约 10,000 个并发智能体。</p><p><strong>再用约 17 小时</strong>由 GPT‑6 Astra 进行 Lean 形式化与验证。公告称项目及验证于 9 月 6 日完成。</p><p><strong>9 月 8 日</strong>发布结果。OpenAI 表示不打算申请这项千禧年奖金。</p></div>
+  <p class="small">以上时间和规模均为官方报告，不是本网页独立测量。大量智能体说明探索资源的规模；它不能代替对最终证明的检查。</p>
+  <div class="note warn"><span class="note-label">Euler 与 NS 要分开</span><p><strong>Euler 方程：</strong>ν = 0，没有黏性项。公告报告其无外力版本的奇点结果。<br><strong>此次 NS 结果：</strong>ν &gt; 0，存在光滑外力。两者的假设不同。把 Euler 证明里的流场直接放进 NS 方程，会多出黏性项；不能自动得到 NS 的结论。</p></div>
+</section>
+
+<section id="limits">
+  <span class="section-no">06 / 准确地说“解决了什么”</span>
+  <h2>“有外力”是正式题目允许的路径</h2>
+  <p>Clay 的正式表述给出四条可接受路径：A、B 证明在指定条件下始终存在光滑解；C、D 构造符合条件的崩溃。这里有一个重要的不对称：<strong>A、B 明确取外力为零；C、D 允许符合严格条件的光滑外力。</strong><a class="source-ref" href="#source-2">[2]</a></p>
+  <table class="comparison"><caption class="small" style="text-align:left">四种表述：空间在哪里，外力是什么，要证明什么？</caption><thead><tr><th scope="col">路径</th><th scope="col">空间</th><th scope="col">外力与目标</th></tr></thead><tbody><tr><td>A</td><td>整个三维空间 ℝ³</td><td>无外力；所有符合条件的光滑初值，都有全时间光滑、有限能量解。</td></tr><tr><td>B</td><td>三维周期空间</td><td>无外力；所有符合条件的周期光滑初值，都有全时间周期光滑解。</td></tr><tr class="highlight"><td>C</td><td>整个三维空间 ℝ³</td><td>允许光滑外力；存在符合条件的初值与外力，使全时间光滑、有限能量解不存在。</td></tr><tr class="highlight"><td>D</td><td>三维周期空间</td><td>允许光滑外力；存在符合条件的周期初值与外力，使全时间周期光滑解不存在。</td></tr></tbody></table>
+  <p class="small">“周期空间”可以想成一个立方体：从右面出去，就从左面回来，其他方向也一样。在 ℝ³ 中，题目对初值、外力及其导数有快速衰减要求；周期情形也对外力及其导数的时间衰减作要求。“光滑”两个字不能代替这些全部条件。</p>
+  <p>因此，按照正式题目，满足 C 或 D 可以完成千禧年问题的一条解题路径。<strong>但是，有外力的反例不直接否定无外力的 A、B 命题。</strong>这既解释了官方为何使用“解决”，也告诉我们不能把标题扩大成什么。</p>
+  <h3>它对流体力学意味着什么？</h3>
+  <p>在这个理想化方程里，“初始很规整”“外力很规整”“有黏性”“能量有限”这些条件，按公告结果仍不足以阻止某些流动产生奇点。研究者必须更仔细地理解：能量能控制什么，局部集中又能躲过什么控制。</p>
+  <p>对工程学生而言，它揭示的是<strong>模型的数学边界</strong>。你仍然可以用 NS 方程计算合适尺度上的管流、翼型绕流和其他问题。一个经过特殊构造的反例，并不自动证明这些具体工况会爆破，也不直接提供更快的 CFD 算法或所有湍流的预测方法。</p>
+  <h3>真实流体会跑出“无限速度”吗？</h3>
+  <p>数学模型允许的无界极限，不等于真实水流可以达到无限速度。越来越小的尺度和极端速度会使不可压缩、连续介质等理想化假设需要重新检查。真实描述可能需要考虑可压缩性、分子运动或其他物理机制；具体切换到什么模型取决于尺度与工况。</p>
+  <div class="note"><span class="note-label">学完后，可以这样复述这项突破</span><p>“OpenAI 宣布，AI 系统证明了一个从静止开始、受到合规光滑外力的三维黏性不可压缩 NS 流动，会在有限时间内形成速度无界的奇点，同时总动能有限；官方称它完成了千禧年问题的 C、D 表述，并报告 Lean 形式化。这不直接解决无外力 NS 的全部正则性问题，也不意味着真实流体能达到无限速度。”</p></div>
+</section>
+
+<section id="paper-mark-panel" class="paper-mark-panel">
+  <span class="section-no">07 / 把理解留在脑海里</span>
+  <h2>四道题，检查你有没有抓住关键</h2>
+  <p>选择后立即查看解释。答案都能在正文里找到；这不是计算考试。</p>
+  <form class="quiz" id="quiz">
+    <fieldset data-answer="b"><legend>1. “不可压缩”主要约束什么？</legend><div class="options"><label><input type="radio" name="q1" value="a">所有位置的速度相同</label><label><input type="radio" name="q1" value="b">同一小团流体的体积不变</label><label><input type="radio" name="q1" value="c">流体不能旋转或拉长</label></div><p class="quiz-feedback" aria-live="polite"></p></fieldset>
+    <fieldset data-answer="c"><legend>2. 局部速度无界，为什么总动能仍可能有限？</legend><div class="options"><label><input type="radio" name="q2" value="a">因为黏性让速度平方变成负数</label><label><input type="radio" name="q2" value="b">因为速度与能量完全没有关系</label><label><input type="radio" name="q2" value="c">高速空间区域足够小，速度平方的积分仍有限</label></div><p class="quiz-feedback" aria-live="polite"></p></fieldset>
+    <fieldset data-answer="a"><legend>3. 公告报告的 NS 结果包含哪组条件？</legend><div class="options"><label><input type="radio" name="q3" value="a">三维、不可压缩、正黏性、光滑外力、静止起点</label><label><input type="radio" name="q3" value="b">三维、无黏性、无外力</label><label><input type="radio" name="q3" value="c">二维、无限大的外力</label></div><p class="quiz-feedback" aria-live="polite"></p></fieldset>
+    <fieldset data-answer="b"><legend>4. 得到合规有外力的 C、D 反例，能直接推出什么？</legend><div class="options"><label><input type="radio" name="q4" value="a">无外力的 A、B 命题必然为假</label><label><input type="radio" name="q4" value="b">完成正式题目允许的崩溃路径，但不直接否定无外力命题</label><label><input type="radio" name="q4" value="c">所有工程流动都会形成奇点</label></div><p class="quiz-feedback" aria-live="polite"></p></fieldset>
+  </form>
+  <p id="quiz-score" class="small" aria-live="polite">已回答 0 / 4 题。</p>
+  <details><summary>如果还觉得抽象，下一步怎么学？</summary><p>先用喷嘴例子复习物质导数，再用两层流体复习黏性动量传递；然后区分速度、角速度、涡量。最后回到能量积分：问自己“整体平方积分有限，为什么不保证最大值有限？”这四个基础概念连起来，比先钻进证明的技术细节更有帮助。</p></details>
+</section>
+
+<section id="sources">
+  <span class="section-no">08 / 事实从哪里来</span>
+  <h2>原始来源与阅读范围</h2>
+  <ol class="sources"><li id="source-1"><a href="https://openai.com/index/navier-stokes-solution/" target="_blank" rel="noopener noreferrer">OpenAI · On the Navier–Stokes Millennium Prize Problem</a><p>成果条件、涡旋机制、有限能量、C/D 主张、AI 协作规模及 Lean 验证报告的来源。2026 年 9 月 8 日发布。读取正文时直连受限，采用该官方 URL 的文本提取版本；本页不把提取服务当作独立证据。</p></li><li id="source-2"><a href="https://www.claymath.org/wp-content/uploads/2022/06/navierstokes.pdf" target="_blank" rel="noopener noreferrer">Charles L. Fefferman · Existence and Smoothness of the Navier–Stokes Equation</a><p>千禧年问题的正式表述。重点阅读第 1–2 页的条件和 A、B、C、D；后文可查看弱解和历史背景。公式以原 PDF 为准，本次文本提取存在排版损失。</p></li><li id="source-3"><a href="https://www.claymath.org/millennium/navier-stokes-equation/" target="_blank" rel="noopener noreferrer">Clay Mathematics Institute · Navier–Stokes Equation</a><p>题目背景与官方入口。本次读取页面显示 “Active”；这不是对新证明的独立评审意见。</p></li></ol>
+  <p class="small">阅读范围：已读取官方公告正文、正式题目文本与 Clay 介绍页。未独立取得并审计新证明全文、Lean 工程，亦未核实后续同行评审与奖金认定。文中的 NS 方程、涡量关系和能量关系是基础教学解释；两组滑块演示均是明示的教学模型，不是论文实验数据或证明复现。</p>
+  <a class="anchor-link" href="#thesis">回到突破的准确表述 ↑</a>
+</section>
+<footer class="footer">理解一项突破，先问它的前提，再看它的机制，最后检查证据。网页无需联网即可阅读和操作；原始来源链接需要联网。</footer>
+</main>
+</div>
+<script>
+(() => {
+  'use strict';
+  const byId = id => document.getElementById(id);
+  const descriptions = {
+    time: ['∂u / ∂t：固定地点看见的速度变化','你站在桥上，观察同一个位置的水速怎样随时间变化。∂ 是偏导数：先固定空间位置，只对时间求变化率。它与下一项相加，才是随流体运动的总加速度。'],
+    advection: ['(u · ∇)u：流体走到别处，遇到不同速度','在稳定的收缩喷嘴中，固定位置的速度不随时间变，但水滴进入更窄、更快的区域，仍然加速。这个输运项含有速度与速度空间导数的乘积，是方程非线性的来源。'],
+    pressure: ['−∇p / ρ：压力差推动流体','∇p 指向压力增加最快的方向，负号使加速度指向低压侧。压力还必须与不可压缩约束协调，不是能任意指定的独立旋钮。这里 ρ 是常密度。'],
+    viscosity: ['ν Δu：黏性传递动量，抹平速度起伏','快慢相邻的流体之间会传递动量。黏性可能让快处变慢，也让慢处变快；整体上产生耗散。ν 是运动黏度，Δ 是三个空间方向的二阶导数之和。新结果保留了 ν > 0。'],
+    force: ['f：外部作用，按单位质量计','例如重力或其他施加的体力，单位是 m/s²。公告报告的 NS 构造使用光滑外力；正式题目还对外力及其导数有衰减等要求，不能把无穷大外力藏在这里。']
+  };
+  byId('equation-terms').addEventListener('click', e => {
+    const button = e.target.closest('button[data-term]');
+    if (!button) return;
+    document.querySelectorAll('#equation-terms button').forEach(b => b.setAttribute('aria-pressed',String(b === button)));
+    const [heading, body] = descriptions[button.dataset.term];
+    const title = document.createElement('strong'); title.textContent = heading;
+    byId('term-explanation').replaceChildren(title,document.createTextNode(body));
+  });
+
+  function updateStretch() {
+    const lambda = Number(byId('stretch').value), ratio = 1 / Math.sqrt(lambda);
+    const length = 134 * lambda, r = 40 * ratio, x = 330 - length / 2, y = 110 - r;
+    byId('stretch-label').textContent = lambda.toFixed(2);
+    byId('length-ratio').textContent = lambda.toFixed(2);
+    byId('radius-ratio').textContent = ratio.toFixed(2);
+    byId('volume-ratio').textContent = (lambda * ratio * ratio).toFixed(2);
+    const body = byId('tube-body');
+    for (const [k,v] of Object.entries({x,y,width:length,height:2*r})) body.setAttribute(k,v);
+    for (const [id,cx] of [['tube-left',x],['tube-right',x+length]]) {
+      byId(id).setAttribute('cx',cx); byId(id).setAttribute('ry',r); byId(id).setAttribute('rx',13*ratio);
+    }
+    byId('tube-top').setAttribute('d',`M${x} ${y}H${x+length}`);
+    byId('tube-bottom').setAttribute('d',`M${x} ${110+r}H${x+length}`);
+    byId('stretch-arrow-left').setAttribute('d',`M${x-19*ratio} 110H${x-47}`);
+    byId('stretch-arrow-right').setAttribute('d',`M${x+length+19*ratio} 110H${x+length+47}`);
+    byId('stretch-status').textContent = lambda === 1 ? '长度 × 半径² 保持不变，所以一小团流体变长时，也必须变细。' : `长度变为 ${lambda.toFixed(2)} 倍，半径变为 ${ratio.toFixed(2)} 倍；体积仍是 1.00 倍。注意：这里跟踪的是同一团物质。`;
+  }
+  byId('stretch').addEventListener('input',updateStretch);
+  byId('stretch-reset').addEventListener('click',() => {byId('stretch').value = 1;updateStretch();});
+  updateStretch();
+
+  const ns = 'http://www.w3.org/2000/svg';
+  function svgElement(tag,attrs,text) {
+    const el = document.createElementNS(ns,tag);
+    for(const [k,v] of Object.entries(attrs)) el.setAttribute(k,v);
+    if(text !== undefined) el.textContent = text;
+    return el;
+  }
+  const plot = {left:70,right:618,top:25,bottom:205,minLog:-6,maxLog:2};
+  const px = t => plot.left + (plot.right-plot.left)*t;
+  const py = v => plot.bottom - (Math.log10(v)-plot.minLog)/(plot.maxLog-plot.minLog)*(plot.bottom-plot.top);
+  function drawEnergy() {
+  const width = Math.max(230,byId('energy-svg').clientWidth);
+  byId('energy-svg').setAttribute('viewBox',`0 0 ${width} 260`);
+  plot.right = width-24;
+  byId('energy-grid').replaceChildren();
+  for(let exponent = -6; exponent <= 2; exponent += 2) {
+    const yy = py(Math.pow(10,exponent));
+    byId('energy-grid').append(svgElement('path',{d:`M${plot.left} ${yy}H${plot.right}`,stroke:'#dce1dc','stroke-width':1}));
+    byId('energy-grid').append(svgElement('text',{x:plot.left-10,y:yy+5,'text-anchor':'end','font-size':14},['0.000001','0.0001','0.01','1','100'][(exponent+6)/2]));
+  }
+  for(const t of [0,.5,1]) byId('energy-grid').append(svgElement('text',{x:px(t),y:228,'text-anchor':'middle','font-size':14},t === 1 ? '1（T）' : String(t)));
+  byId('energy-grid').append(svgElement('text',{x:plot.left,y:13,'font-size':13},'相对量 · 对数尺度'));
+  byId('energy-grid').append(svgElement('text',{x:(plot.left+plot.right)/2,y:252,'font-size':14,'text-anchor':'middle'},'归一化时间 t / T'));
+  byId('energy-grid').append(svgElement('path',{d:`M${plot.left} ${plot.top}V${plot.bottom}H${plot.right}`,stroke:'#80918f',fill:'none'}));
+  for(const [id,fn] of [['curve-u',t=>1/(1-t)],['curve-e',t=>1-t],['curve-v',t=>Math.pow(1-t,3)]]) {
+    let d='';for(let i=0;i<=196;i++){const t=i*.005;d+=`${i?'L':'M'}${px(t).toFixed(2)} ${py(fn(t)).toFixed(2)} `;}
+    byId(id).setAttribute('d',d);
+  }
+  updateEnergy();
+  }
+  function updateEnergy() {
+    const t = Number(byId('time').value), u = 1/(1-t), v = Math.pow(1-t,3), energy = u*u*v;
+    byId('time-label').textContent = t.toFixed(2);
+    byId('speed-value').textContent = u.toFixed(2);
+    byId('region-value').textContent = v < .001 ? v.toExponential(1) : v.toFixed(3);
+    byId('energy-value').textContent = energy.toFixed(2);
+    byId('time-guide').setAttribute('d',`M${px(t)} ${plot.top}V${plot.bottom}`);
+    for(const [id,value] of [['dot-u',u],['dot-e',energy],['dot-v',v]]){byId(id).setAttribute('cx',px(t));byId(id).setAttribute('cy',py(value));}
+    byId('energy-status').textContent = t === 0 ? '起点：区域速度、体积和能量都归一化为 1。向右拖动，观察三个量怎样分开。' : `此时速度是 ${u.toFixed(2)} 倍，区域能量是 ${energy.toFixed(2)} 倍。速度很大，但它占据的区域更小；这只是有限能量与局部无界兼容的演示。`;
+  }
+  byId('time').addEventListener('input',updateEnergy);
+  byId('near-end').addEventListener('click',()=>{byId('time').value=.98;updateEnergy();});
+  byId('energy-reset').addEventListener('click',()=>{byId('time').value=0;updateEnergy();});
+  updateEnergy();
+  function responsiveCharts(){
+    drawEnergy();
+    const width=byId('stretch-svg').clientWidth;
+    if(width>0)byId('stretch-caption').setAttribute('font-size',Math.max(16,14*660/width));
+  }
+  if(typeof ResizeObserver!=='undefined')new ResizeObserver(responsiveCharts).observe(byId('energy-lab'));
+  window.addEventListener('resize',responsiveCharts);
+  responsiveCharts();
+
+  const quizExplanations = ['不可压缩约束同一团流体的体积；速度仍可随位置变化，流体也可旋转与拉伸。','能量是速度平方的体积积分，不是峰值。高速区域足够小，总量可以保持有限。','NS 的公告结果有正黏性和光滑外力，并从静止开始；无外力 Euler 是另一项、不同假设的结果。','C、D 是正式题目允许的崩溃路径；有外力的反例不直接否定无外力的 A、B。'];
+  const fieldsets = [...document.querySelectorAll('#quiz fieldset')];
+  byId('quiz').addEventListener('change',e=>{
+    const fieldset = e.target.closest('fieldset'); if(!fieldset) return;
+    const correct = e.target.value === fieldset.dataset.answer;
+    const feedback = fieldset.querySelector('.quiz-feedback');
+    feedback.textContent = (correct ? '回答正确。' : '再想一想。')+quizExplanations[fieldsets.indexOf(fieldset)];
+    feedback.className = 'quiz-feedback '+(correct?'correct':'incorrect');
+    let answered=0,score=0; fieldsets.forEach(f=>{const checked=f.querySelector('input:checked');if(checked){answered++;if(checked.value===f.dataset.answer)score++;}});
+    byId('quiz-score').textContent=`已回答 ${answered} / 4 题，答对 ${score} 题。${answered===4 && score===4 ? '你已经抓住了这项结果的条件、机制与边界。':''}`;
+  });
+  byId('font-toggle').addEventListener('click',()=>{const active=document.body.classList.toggle('large-text');byId('font-toggle').setAttribute('aria-pressed',String(active));byId('font-toggle').textContent=active?'恢复字号':'放大正文';});
+  byId('print-page').addEventListener('click',()=>window.print());
+  const links = [...document.querySelectorAll('#reading-map a')];
+  const sections = [...document.querySelectorAll('main section')];
+  function updateReading() {
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    byId('progress').style.width = `${max>0?100*window.scrollY/max:0}%`;
+    let current=sections[0];for(const section of sections){if(section.getBoundingClientRect().top<180)current=section;}
+    links.forEach(a=>{const active=a.hash==='#'+current.id;a.classList.toggle('active',active);if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
+  }
+  window.addEventListener('scroll',updateReading,{passive:true});window.addEventListener('resize',updateReading);updateReading();
+})();
+</script>
+</body>
+</html>
